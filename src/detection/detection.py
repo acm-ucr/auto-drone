@@ -5,7 +5,7 @@ stream_url = "http://192.168.1.219:7123/stream.mjpg"
 cap = cv2.VideoCapture(stream_url)
 
 # Cascade data for traffic cones
-stop_data = cv2.CascadeClassifier('src\cascade.xml')
+stop_data = cv2.CascadeClassifier('training\classifier\cascade.xml')
 
 while(1):
     ret, frame = cap.read()
