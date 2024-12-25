@@ -26,3 +26,8 @@ acm
 mit
 cmu
 intersections
+roads
+highways
+highway
+freeways
+freeway
