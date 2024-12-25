@@ -1,15 +1,11 @@
-import socket
-import sys
 import cv2
-import pickle
 import numpy as np
-import struct
 
 stream_url = "http://192.168.1.219:7123/stream.mjpg"
 cap = cv2.VideoCapture(stream_url)
 
 # Cascade data for traffic cones
-stop_data = cv2.CascadeClassifier('cascade.xml')
+stop_data = cv2.CascadeClassifier('src\cascade.xml')
 
 while(1):
     ret, frame = cap.read()
@@ -17,7 +13,7 @@ while(1):
     # This should be done after a frame assembled after unpacking from the socket.    
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
-    found = stop_data.detectMultiScale(gray_frame, minSize = (20, 20))
+    found = stop_data.detectMultiScale(gray_frame, minSize = (24, 24))
     amount_found = len(found)
     if (amount_found != 0) :
         for (x, y, w, h) in found:

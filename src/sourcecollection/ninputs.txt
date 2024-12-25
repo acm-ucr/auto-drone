@@ -1,0 +1,28 @@
+streets
+cars
+bedroom
+bed
+traffic
+trucks
+stop sign
+yield sign
+hotel
+building
+city
+night city
+raining city
+downtown
+desk
+backyard
+trees
+birds
+chicago
+new york
+detroit
+san francisco
+michigan
+los angeles
+acm
+mit
+cmu
+intersections

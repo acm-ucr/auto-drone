@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Image Folders
+n/
+p/
+neg.lst
+pos.lst
+pos_samples.vec
+classifier/
