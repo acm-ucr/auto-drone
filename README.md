@@ -14,4 +14,4 @@ A Python script uses the icrawler API to go through Google, collecting at most 1
 ## Resources:  
 OpenCV2  
 icrawler  
-Cascade Trainer GUI  
+Cascade Trainer GUI: https://amin-ahmadi.com/cascade-trainer-gui/  
