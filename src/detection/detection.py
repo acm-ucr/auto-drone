@@ -7,7 +7,7 @@ stream_url = "http://192.168.1.219:7123/stream.mjpg"
 cap = cv2.VideoCapture(0)
 
 # Cascade data for traffic cones
-stop_data = cv2.CascadeClassifier('training\classifier\cascade.xml')
+cone_data = cv2.CascadeClassifier('training\classifier\cascade.xml')
 
 # Client and broker set up
 # client = mqtt.Client("my_client")
@@ -18,22 +18,32 @@ topic = "Drone Commands"
 # Array of messages?
 msg_array = np.array(["Move Forward", "Move Left", "Move Right", "Move Back", "Move Up", "Move Down"])
 
+# Array of CV2 Rectangles
+rect_list = []
 while(1):
-    rect_list = []
-    for i in range(10):
-        ret, frame = cap.read()
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        found = stop_data.detectMultiScale(gray_frame, minSize = (24, 24))
-        amount_found = len(found)
+    ret, frame = cap.read()
+    cv2.imshow("capture", frame)
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    found = cone_data.detectMultiScale(gray_frame, minSize = (24, 24))
+    amount_found = len(found)
+    
+    # Finds the rectangle with the largest area and appends it to our list. 
+    if amount_found > 0:
+        print(f"Amount Found: {amount_found}")
+        start_point = (found[0][0], found[0][1])
+        end_point = (found[0][0] + found[0][2], found[0][1] + found[0][3])
+        max = cv2.rectangle(frame, start_point, end_point, (0,0,255), 2)
         
-        # Finds the rectangle with the largest area and appends it to our list. 
-        if amount_found > 0:
-            max = found[0]
-            if amount_found > 1:
-                for j in found:
-                    if found[j].area() > max.area():
-                        max = found[j]
-            rect_list.append(max)
+        max_area = found[0][1] * found[0][3]
+        for j in found:
+            rect_area = (j[2] * j[3])
+            
+            if rect_area > max_area:
+                rect_start_point = (j[0], j[1])
+                rect_end_point = (j[0] + j[2], j[1] + j[3])
+                rect = cv2.rectangle(frame, rect_start_point, rect_end_point, (0,0,255), 2)
+                max = rect
+        rect_list.append(max)
         
         # Calculate Average X, Y
         if len(rect_list) == 10:
@@ -42,14 +52,15 @@ while(1):
             avgh = 0
             avgw = 0
             for j in rect_list:
-                avgx += j.x
-                avgy += j.y
-                avgh += j.height
-                avgw += j.width
+                avgx = avgx + j[0]
+                avgy = avgy + j[1]
+                avgw = avgw + j[2]
+                avgh = avgh + j[3]   
             avgx = avgx/10
-            avgy = avgy/10
-            avgh = avgh/10
-            avgw = avgw/10
+            print(f"avgx: {avgx}")
+            avgy = int(avgy/10)
+            avgh = int(avgh/10)
+            avgw = int(avgw/10)
             
             # Display most recent frame with average x, y, height, and width
             cv2.rectangle(frame, (avgx, avgy), (avgx+avgw, avgy+avgh), (255, 0, 0), 2)
@@ -60,6 +71,11 @@ while(1):
             centerY = avgy + (avgw/2)
             
             # Based on center coordinates, switch statement to make a decision
+            
+            # Clear list for the next cycle
+            rect_list.clear()
+        
+     
             
             
     if cv2.waitKey(1) & 0xFF == ord('q'):
