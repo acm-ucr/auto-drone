@@ -77,41 +77,31 @@ while(1):
             cv2.imshow("capture", frame)
             
             # Find center of the object
+            object_center_x = avgx + int(avgw/2)
+            object_center_y = avgy + int(avgh/2)
             
-            # Based on center coordinates, switch statement to make a decision
             
-            # Clear list for the next cycle
+            # Ignore instances where the average area is less than a something, arbitrarily chose 50 x 50
+            msg = msg_array[0]
+            if (avgx > 100 and avgy > 100):
+                # Based on center coordinates relative to center of 640x480p camera feed, switch statement to make a decision
+                if (avgx > 320):
+                    # Move Right
+                    msg = msg_array[2]
+                else:
+                    # Move Left (also by default)
+                    msg = msg_array[1]
+
+            print(f"Direction Message: {msg}")
             
+            # Broadcast message
+            
+ 
             # Reset counter
             counter = 0
-   
+  
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     
 cap.release
 cv2.destroyAllWindows
-
-
-    # # Array of Rectanges
-    # rect_array = np.array(10)
-    # # Generate a coordinate of a cone over 10 frames. 
-    # for i in range(10): 
-    #     ret, frame = cap.read()
-
-    #     # This should be done after a frame assembled after unpacking from the socket.    
-    #     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
-    #     found = stop_data.detectMultiScale(gray_frame, minSize = (24, 24))
-    #     amount_found = len(found)
-    #     if (amount_found != 0) :
-    #         # Drone.stop
-    #         rect_array = np.array()
-    #         for (x, y, w, h) in found:
-    #             # Find the largest rectangle, maybe using lidar?
-    #             # Store the closest rectangle into rect_array
-                
-    #             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-    #             # Move drone until the object is no longer tracked
-    #             # Choose direction based on x, y coordinates relative to 640 x 480 frame
-        
-    #     # Else, then move drone forward?
