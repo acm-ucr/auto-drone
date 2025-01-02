@@ -18,66 +18,73 @@ topic = "Drone Commands"
 # Array of messages?
 msg_array = np.array(["Move Forward", "Move Left", "Move Right", "Move Back", "Move Up", "Move Down"])
 
-# Array of CV2 Rectangles
-rect_list = []
+# Counter value
+counter = 0
+
 while(1):
+
+    # Array of CV2 Rectangles dimensions
+    max_list = np.empty((10,4))
+    
+    # Captures the frame and stores found object rectangles in found
     ret, frame = cap.read()
     cv2.imshow("capture", frame)
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     found = cone_data.detectMultiScale(gray_frame, minSize = (24, 24))
     amount_found = len(found)
+    print(f"Amount Found: {amount_found}")
     
-    # Finds the rectangle with the largest area and appends it to our list. 
+    # Finds the rectangle with the largest area and appends it to our list
     if amount_found > 0:
-        print(f"Amount Found: {amount_found}")
-        start_point = (found[0][0], found[0][1])
-        end_point = (found[0][0] + found[0][2], found[0][1] + found[0][3])
-        max = cv2.rectangle(frame, start_point, end_point, (0,0,255), 2)
+        # Get the first maximum area
+        max = np.array([found[0][0], found[0][1], found[0][2], found[0][3]])
+        max_area = found[0][2] * found[0][3]
         
-        max_area = found[0][1] * found[0][3]
-        for j in found:
-            rect_area = (j[2] * j[3])
+        # Checks the rest of the found rectangles for the maximum area
+        for i in range(amount_found):
+            area = found[i][2] * found[i][3]
+            if max_area < area:
+                max = np.array([found[i][0], found[i][1], found[i][2], found[i][3]])
+                max_area = area
+        
+        # Populates the correct row of max_list with the values of the maximum rectangle
+        for i in range(4):
+            max_list[counter][i] = max[i]
             
-            if rect_area > max_area:
-                rect_start_point = (j[0], j[1])
-                rect_end_point = (j[0] + j[2], j[1] + j[3])
-                rect = cv2.rectangle(frame, rect_start_point, rect_end_point, (0,0,255), 2)
-                max = rect
-        rect_list.append(max)
+        counter = counter + 1
+        print(f"Counter: {counter}")
         
         # Calculate Average X, Y
-        if len(rect_list) == 10:
-            avgx = 0
-            avgy = 0
-            avgh = 0
-            avgw = 0
-            for j in rect_list:
-                avgx = avgx + j[0]
-                avgy = avgy + j[1]
-                avgw = avgw + j[2]
-                avgh = avgh + j[3]   
-            avgx = avgx/10
-            print(f"avgx: {avgx}")
-            avgy = int(avgy/10)
-            avgh = int(avgh/10)
-            avgw = int(avgw/10)
+        if counter == 10:
+            avgx, avgy, avgw, avgh = 0, 0, 0, 0
+            for i in range(10):
+                avgx += max_list[i][0]
+                avgy += max_list[i][1]
+                avgw += max_list[i][2]
+                avgh += max_list[i][3]
             
+            avgx = int(avgx/10)
+            print(f"Average x: {avgx}")
+            avgy = int(avgy/10)
+            print(f"Average y: {avgy}")
+            avgw = int(avgw/10)
+            print(f"Average w: {avgw}")
+            avgh = int(avgh/10)            
+            print(f"Average h: {avgh}")
+        
             # Display most recent frame with average x, y, height, and width
-            cv2.rectangle(frame, (avgx, avgy), (avgx+avgw, avgy+avgh), (255, 0, 0), 2)
-            cv2.imshow("tracking", frame)
+            cv2.rectangle(frame, (int(avgx), int(avgy)), (int(avgx+avgw), int(avgy+avgh)), (255, 0, 0), 2)
+            cv2.imshow("capture", frame)
             
             # Find center of the object
-            centerX = avgx + (avgh/2)
-            centerY = avgy + (avgw/2)
             
             # Based on center coordinates, switch statement to make a decision
             
             # Clear list for the next cycle
-            rect_list.clear()
-        
-     
             
-            
+            # Reset counter
+            counter = 0
+   
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     
