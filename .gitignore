@@ -176,4 +176,9 @@ p/
 neg.lst
 pos.lst
 pos_samples.vec
+p_sized/
+p_unsized/
+neg.txt
+pos.txt
+pos.vec
 classifier/
