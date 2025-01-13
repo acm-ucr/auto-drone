@@ -7,7 +7,7 @@ stream_url = "http://192.168.1.219:7123/stream.mjpg"
 cap = cv2.VideoCapture(0)
 
 # Cascade data for traffic cones
-cone_data = cv2.CascadeClassifier('training\classifier\cascade.xml')
+cone_data = cv2.CascadeClassifier('/home/justin-im/Projects/auto-drone/training/classifier/cascade1.xml')
 
 # Client and broker set up
 # client = mqtt.Client("my_client")
