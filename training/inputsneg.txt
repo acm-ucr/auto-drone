@@ -4,6 +4,25 @@ sanfrancisco city
 los angeles city
 detroit city
 bedroom
+highway
+freeway
+driveway
+street
+city
+city street
+pleasanton city
+san francisco city
+downtown
+riverside city
+san ramon city
+detroit city
+bedroom
+schoolzone
+uc riverside
+uc la
+ucs
+carnegie mellon university
+robotics
 snow
 snowy city
 traffic in snow

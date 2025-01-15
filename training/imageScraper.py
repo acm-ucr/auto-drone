@@ -3,15 +3,15 @@ from icrawler.builtin import BingImageCrawler
 from PIL import Image
 
 # Crawling for positive images
-# print("Crawling for positives")
-# positive_crawler = BingImageCrawler(parser_threads = 2, downloader_threads = 4, storage = {'root_dir': r'training/p'})
-# positive_crawler.session.verify = False
-# with open("training/inputspos.txt") as pinputs_file:
-#     for line in pinputs_file:
-#         positive_crawler.crawl(
-#             keyword = line,
-#             max_num = 500,
-#             file_idx_offset = 'auto')
+print("Crawling for positives")
+positive_crawler = BingImageCrawler(parser_threads = 2, downloader_threads = 4, storage = {'root_dir': r'training/p'})
+positive_crawler.session.verify = False
+with open("training/inputspos.txt") as pinputs_file:
+    for line in pinputs_file:
+        positive_crawler.crawl(
+            keyword = line,
+            max_num = 500,
+            file_idx_offset = 'auto')
         
 # print("Crawling for negatives")
 # # Crawling for negative images

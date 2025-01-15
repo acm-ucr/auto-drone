@@ -5,13 +5,13 @@ from picamera2 import Picamera2
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
 import logging
-import numpy as np
 import socketserver
 import sys
 import pickle
 import struct ### new code
 from threading import Condition
 from http import server
+from paho.mqtt import client as mqtt_client
 
 PAGE = """\
 <html>
@@ -24,6 +24,33 @@ PAGE = """\
 </body>
 </html>
 """
+
+broker = 'broker.emqx.io'
+port = 1883
+topic = "Drone Commands"
+# Generate a Client ID with the subscribe prefix.
+client_id = f'subscribe-{"jared"}'
+
+def connect_mqtt() -> mqtt_client:
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+
+    client = mqtt_client.Client(client_id)
+    # client.username_pw_set(username, password)
+    client.on_connect = on_connect
+    client.connect(broker, port)
+    return client
+
+
+def subscribe(client: mqtt_client):
+    def on_message(client, userdata, msg):
+        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
+    client.subscribe(topic)
+    client.on_message = on_message
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
@@ -86,9 +113,20 @@ picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
 output = StreamingOutput()
 picam2.start_recording(JpegEncoder(), FileOutput(output))
 
-try:
-    address = ('', 7123)
-    server = StreamingServer(address, StreamingHandler)
-    server.serve_forever()
-finally:
-    picam2.stop_recording()
+
+def run(): 
+    client = connect_mqtt()
+    subscribe(client)
+    client.loop_start()
+
+    print("Entered camera loop")
+    try:
+        address = ('', 7123)
+        server = StreamingServer(address, StreamingHandler)
+        server.serve_forever()
+    finally:
+        picam2.stop_recording()
+        client.loop_end()
+
+if __name__== '__main__':
+    run()
