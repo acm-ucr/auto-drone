@@ -1,5 +1,18 @@
+highway
+freeway
+sanfrancisco city
+los angeles city
+detroit city
+bedroom
 snow
 snowy city
 traffic in snow
 seoul city
 tokyo city
+driveway
+roads
+busy roads
+deers
+goats
+new york city
+ucr

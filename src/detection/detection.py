@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
 
-stream_url = "http://192.168.1.219:7123/stream.mjpg"
+stream_url = "http://10.42.0.107:7123/stream.mjpg"
 # cap = cv2.VideoCapture(stream_url)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(stream_url)
 
 # Cascade data for traffic cones
-stop_data = cv2.CascadeClassifier('training\classifier\cascade.xml')
+cone_data = cv2.CascadeClassifier('/home/justin-im/Projects/auto-drone/training/classifier/cascade1.xml')
 
 while(1):
     ret, frame = cap.read()
@@ -14,7 +14,7 @@ while(1):
     # This should be done after a frame assembled after unpacking from the socket.    
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
-    found = stop_data.detectMultiScale(gray_frame, minSize = (24, 24))
+    found = cone_data.detectMultiScale(gray_frame, minSize = (24, 24))
     amount_found = len(found)
     if (amount_found != 0) :
         # Drone.stop
