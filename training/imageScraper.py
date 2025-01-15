@@ -1,5 +1,6 @@
 import os
 from icrawler.builtin import BingImageCrawler
+from PIL import Image
 
 # Crawling for positive images
 print("Crawling for positives")
@@ -20,8 +21,18 @@ with open("training/inputspos.txt") as pinputs_file:
 #     for line in ninputs_file:
 #         negative_crawler.crawl(
 #             keyword = line,
-#             max_num = 500,
+#             max_num = 1000,
 #             file_idx_offset = 'auto')
+
+# Resize negative images
+
+with open ("training/n") as negFiles:
+    for img in negFiles:
+        image = Image.open(img)
+        image = image.resize(640, 480)
+        image.save(img)
+        print("image resized")
+
 
 # Loops to count
 print("Counting Files")
