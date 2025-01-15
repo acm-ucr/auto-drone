@@ -20,9 +20,6 @@ client_id = f'python-mqtt-{"jiggles"}'
 # Array of messages?
 msg_array = np.array(["Move Forward", "Move Left", "Move Right", "Move Back", "Move Up", "Move Down"])
 
-# Counter value
-counter = 0
-
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -30,7 +27,7 @@ def connect_mqtt():
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(client_id)
+    client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2, client_id)
     # client.username_pw_set(username, password)
     client.on_connect = on_connect
     client.connect(broker, port)
@@ -49,6 +46,8 @@ def publish(client, msg):
 
 
 def run():
+    # Counter value
+    counter = 0
     client = connect_mqtt()
     client.loop_start()
 
