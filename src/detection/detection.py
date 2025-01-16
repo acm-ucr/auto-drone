@@ -6,8 +6,8 @@ from paho.mqtt import client as mqtt_client
 # This script is the publisher for mqtt
 
 stream_url = "http://10.42.0.107:7123/stream.mjpg"
-# cap = cv2.VideoCapture(stream_url)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(stream_url)
+# cap = cv2.VideoCapture(0)
 
 # Cascade data for traffic cones
 cone_data = cv2.CascadeClassifier('/home/justin-im/Projects/auto-drone/training/classifier/cascade1.xml')
@@ -17,9 +17,6 @@ broker = 'broker.emqx.io'
 port = 1883
 topic = "Drone Commands"
 client_id = f'python-mqtt-{"jiggles"}'
-
-# Array of messages?
-msg_array = np.array(["Move Forward", "Move Left", "Move Right", "Move Back", "Move Up", "Move Down"])
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -67,25 +64,23 @@ def run():
 
         # Sort by size, take the largest rectangle
         sorted_rects = sorted(found, key=lambda r: r[2] * r[3], reverse=True)
-        msg = msg_array[0]
+        msg = 0
         if (len(sorted_rects) > 0):
             cv2.rectangle(frame, (sorted_rects[0][0], sorted_rects[0][1]), (sorted_rects[0][0] + sorted_rects[0][2], sorted_rects[0][1] + sorted_rects[0][3]), (37, 0, 66), 2)
 
             # Calculate center coordinates of largest rectangle
             center = (sorted_rects[0][0] + int(sorted_rects[0][2]/2), sorted_rects[0][1] + int(sorted_rects[0][3]/2))
-            cv2.circle(frame, center, radius = 2, color=(0, 0, 255), thickness=2)
+            cv2.circle(frame, center, radius = 4, color = (0, 0, 255), thickness = 4)
 
             if (center[0] > 320):
                 # Move Right
-                msg = msg_array[2]
+                msg = 1
+                publish(client, msg)
             else:
-                msg = msg_array[1]
-
-
-
+                msg = 2
+                publish(client, msg)
+     
         print(f"Direction Message: {msg}")
-
-        publish(client, msg)
 
         cv2.imshow("capture", frame)
 
